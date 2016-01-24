@@ -212,6 +212,16 @@ number of arguments of the iterator function's signature.
 * If a function operand has a `length` property of 1, the evaluator assumes that it should pass a callback into the
 function operand and will *not* expect the function to return a promise, but instead that it will invoke the callback.
 
+If the iterator or any function operands do *not* use the callback-style, make sure that they always return promises and
+that they have defined the correct number of arguments in their signatures (i.e. an iterator must expect one argument
+and a function operand must expect none).
+
+If the iterator or any function operands *do* use the callback-style, make sure that the iterator expects exactly two
+arguments, the latter of which is the callback, and that any function operands expect exactly one argument, the
+callback. In addition, callbacks in both situations must be invoked with either an error or null as the first
+parameter and the result (truthy/falsy value) or null as the second parameter to the callback. Keep this in mind when
+working with certain no-error-style asynchronous functions, such as the built-in fs module's `exists` function.
+
 ### Configuring Parallel Limit
 
 Set the `parallelLimit` property on the evaluator to change the number of concurrent iterators. For example, if an
