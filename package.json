@@ -1,0 +1,37 @@
+{
+  "name": "async-boolean-expression-evaluator",
+  "version": "0.1.0",
+  "description": "Evaluates a boolean expression such as `{or: ['a', 'b']}` by passing each operand into an asynchronous iterator to compute the result.",
+  "main": "./lib/index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha -b --recursive",
+    "prepublish": "npm prune",
+    "docs": "./node_modules/.bin/jsdoc2md \"./lib/**/*.js\" --example-lang js > ./API.md"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CoefficientIO/async-boolean-expression-evaluator.git"
+  },
+  "keywords": [
+    "async",
+    "boolean",
+    "expression",
+    "evaluator"
+  ],
+  "author": "Matt Miller",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CoefficientIO/async-boolean-expression-evaluator/issues"
+  },
+  "homepage": "https://github.com/CoefficientIO/async-boolean-expression-evaluator#readme",
+  "devDependencies": {
+    "esdoc": "0.4.3",
+    "jsdoc-to-markdown": "1.3.3",
+    "mocha": "2.3.4",
+    "should": "8.1.1",
+    "sinon": "1.17.2"
+  },
+  "dependencies": {
+    "async": "1.5.2"
+  }
+}
