@@ -1,6 +1,6 @@
 {
   "name": "async-boolean-expression-evaluator",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Evaluates a boolean expression such as `{or: ['a', 'b']}` by passing each operand into an asynchronous iterator to compute the result.",
   "main": "./lib/index.js",
   "scripts": {
