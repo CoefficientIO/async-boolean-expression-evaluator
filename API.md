@@ -5,25 +5,25 @@ A parser for evaluating boolean expressions, passing each operand to an asynchro
 **Kind**: global class  
 
 * [AsyncBooleanExpressionEvaluator](#AsyncBooleanExpressionEvaluator)
-    * [new AsyncBooleanExpressionEvaluator(iterator)](#new_AsyncBooleanExpressionEvaluator_new)
+    * [new AsyncBooleanExpressionEvaluator([iterator])](#new_AsyncBooleanExpressionEvaluator_new)
     * [.iterator](#AsyncBooleanExpressionEvaluator+iterator) ⇒ <code>function</code>
     * [.iterator](#AsyncBooleanExpressionEvaluator+iterator)
     * [.parallelLimit](#AsyncBooleanExpressionEvaluator+parallelLimit)
     * [.parallelLimit](#AsyncBooleanExpressionEvaluator+parallelLimit) ⇒ <code>Number</code>
+    * [.execute(expression, [callback])](#AsyncBooleanExpressionEvaluator+execute) ⇒ <code>Promise</code>
     * [.clearCache()](#AsyncBooleanExpressionEvaluator+clearCache)
     * [.validateExpression(expression)](#AsyncBooleanExpressionEvaluator+validateExpression) ⇒ <code>boolean</code>
-    * [.evaluateExpression(expression)](#AsyncBooleanExpressionEvaluator+evaluateExpression) ⇒ <code>Promise</code>
+    * [.evaluateExpression(expression, [callback])](#AsyncBooleanExpressionEvaluator+evaluateExpression) ⇒ <code>Promise</code>
     * [.getIteratorResult(operand)](#AsyncBooleanExpressionEvaluator+getIteratorResult) ⇒ <code>Promise</code>
-    * [.execute(expression)](#AsyncBooleanExpressionEvaluator+execute) ⇒ <code>Promise</code>
 
 <a name="new_AsyncBooleanExpressionEvaluator_new"></a>
-### new AsyncBooleanExpressionEvaluator(iterator)
+### new AsyncBooleanExpressionEvaluator([iterator])
 Creates a new evaluator for boolean expressions, given a function to perform an async test against an operand
 
 
-| Param | Type |
-| --- | --- |
-| iterator | <code>function</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| [iterator] | <code>function</code> | See #set iterator for details. Default to a no-op, which only is applicable when all operands are functions |
 
 <a name="AsyncBooleanExpressionEvaluator+iterator"></a>
 ### asyncBooleanExpressionEvaluator.iterator ⇒ <code>function</code>
@@ -59,6 +59,18 @@ Sets the parallelLimit
 Gets the parallelLimit
 
 **Kind**: instance property of <code>[AsyncBooleanExpressionEvaluator](#AsyncBooleanExpressionEvaluator)</code>  
+<a name="AsyncBooleanExpressionEvaluator+execute"></a>
+### asyncBooleanExpressionEvaluator.execute(expression, [callback]) ⇒ <code>Promise</code>
+Validates then executes the given boolean expression
+
+**Kind**: instance method of <code>[AsyncBooleanExpressionEvaluator](#AsyncBooleanExpressionEvaluator)</code>  
+**Returns**: <code>Promise</code> - The result of evaluating the expression  
+
+| Param | Type |
+| --- | --- |
+| expression | <code>object</code> &#124; <code>string</code> | 
+| [callback] | <code>function</code> | 
+
 <a name="AsyncBooleanExpressionEvaluator+clearCache"></a>
 ### asyncBooleanExpressionEvaluator.clearCache()
 Clears the iterator result cache
@@ -77,19 +89,24 @@ Validates the given boolean expression conforms to the correct format
 
 | Param | Type | Description |
 | --- | --- | --- |
-| expression | <code>object</code> &#124; <code>string</code> | The boolean expression to validate |
+| expression | <code>object</code> &#124; <code>\*</code> | The boolean expression to validate |
 
 <a name="AsyncBooleanExpressionEvaluator+evaluateExpression"></a>
-### asyncBooleanExpressionEvaluator.evaluateExpression(expression) ⇒ <code>Promise</code>
+### asyncBooleanExpressionEvaluator.evaluateExpression(expression, [callback]) ⇒ <code>Promise</code>
 Tests each operand in the expression against the asynchronous iterator. Will short-circuit whenever possible, and
 caches the results of operands against the iterator
 
 **Kind**: instance method of <code>[AsyncBooleanExpressionEvaluator](#AsyncBooleanExpressionEvaluator)</code>  
 **Returns**: <code>Promise</code> - A promise that resolves with the result of the expression or rejects if the iterator rejects  
+**Throws**:
+
+- <code>TypeError</code> 
+
 
 | Param | Type | Description |
 | --- | --- | --- |
-| expression | <code>object</code> &#124; <code>string</code> | The expression to evaluate |
+| expression | <code>object</code> &#124; <code>\*</code> | The expression to evaluate |
+| [callback] | <code>function</code> | An optional callback to invoke when the promise is resolved or rejected |
 
 <a name="AsyncBooleanExpressionEvaluator+getIteratorResult"></a>
 ### asyncBooleanExpressionEvaluator.getIteratorResult(operand) ⇒ <code>Promise</code>
@@ -100,16 +117,5 @@ Invokes the iterator for the given operand, or returns its cached result
 
 | Param | Type | Description |
 | --- | --- | --- |
-| operand | <code>string</code> | The operand to pass into the iterator |
-
-<a name="AsyncBooleanExpressionEvaluator+execute"></a>
-### asyncBooleanExpressionEvaluator.execute(expression) ⇒ <code>Promise</code>
-Validates then executes the given boolean expression
-
-**Kind**: instance method of <code>[AsyncBooleanExpressionEvaluator](#AsyncBooleanExpressionEvaluator)</code>  
-**Returns**: <code>Promise</code> - The result of evaluating the expression  
-
-| Param | Type |
-| --- | --- |
-| expression | <code>object</code> &#124; <code>string</code> | 
+| operand | <code>\*</code> | The operand to pass into the iterator |
 
