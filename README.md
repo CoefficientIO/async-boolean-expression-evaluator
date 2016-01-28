@@ -3,6 +3,20 @@
 The AsyncBooleanExpressionEvaluator is a class designed to evaluate a special format of a boolean expression, where
 each operand in the expression can be tested asynchronously.
 
+* [Examples](#examples)
+* [Features](#features)
+* [Understanding Input](#understanding-input)
+  * [Expressions](#expressions)
+  * [Operands](#operands)
+    * [Function Operands](#function-operands)
+  * [Using Callback-Style Operations](#using-callback-style-operations)
+  * [Configuring Parallel Limit](#configuring-parallel-limit)
+* [API](#api)
+* [Scripts](#scripts)
+  * [`npm install`](#npm-install)
+  * [`npm test`](#npm-test)
+  * [`npm run docs`](#npm-run-docs)
+
 ## Examples
 
 ```js
