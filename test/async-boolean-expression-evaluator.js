@@ -298,55 +298,6 @@ describe('AsyncBooleanExpressionEvaluator', () => {
 			}).should.throw(TypeError);
 		});
 
-		it('evaluates function operands instead of passing them into the iterator', () => {
-			function fn () {
-				return new Promise((resolve) => {
-					setImmediate(() => resolve(true));
-				});
-			}
-			return asyncBooleanExpressionEvaluator.execute({or: [1, fn]}).then((result) => {
-				result.should.be.ok();
-			});
-		});
-
-		it('does not cache the results of function operands', () => {
-			const spy = sinon.spy(function fn () {
-				return new Promise((resolve) => {
-					setImmediate(() => resolve(true));
-				});
-			});
-			return asyncBooleanExpressionEvaluator.execute({and: [spy, {or: [1, spy]}]}).then((result) => {
-				result.should.be.ok();
-				spy.callCount.should.equal(2);
-			});
-		});
-
-		it('supports successful callback-style function operands', () => {
-			function fn (done) {
-				setImmediate(() => done(null, true));
-			}
-
-			return asyncBooleanExpressionEvaluator.execute({or: [1, fn]}).then((result) => {
-				result.should.be.ok();
-			});
-		});
-
-		it('supports failure callback-style function operands', () => {
-			class SpecialError extends Error {}
-			function fn (done) {
-				setImmediate(() => done(new SpecialError('Something went wrong'), null));
-			}
-
-			return new Promise((resolve, reject) => {
-				asyncBooleanExpressionEvaluator.execute({or: [1, fn]})
-					.then((result) => reject(result))
-					.catch((err) => {
-						err.should.be.instanceof(SpecialError);
-						resolve();
-					});
-			});
-		});
-
 		it('supports successful callback-style iterators', () => {
 			asyncBooleanExpressionEvaluator.iterator = function test (value, done) {
 				setImmediate(() => done(null, value % 2 === 0));

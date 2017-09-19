@@ -8,7 +8,6 @@ each operand in the expression can be tested asynchronously.
 * [Understanding Input](#understanding-input)
   * [Expressions](#expressions)
   * [Operands](#operands)
-    * [Function Operands](#function-operands)
   * [Using Callback-Style Operations](#using-callback-style-operations)
   * [Configuring Parallel Limit](#configuring-parallel-limit)
 * [API](#api)
@@ -64,15 +63,6 @@ evaluator.execute({and: [2, {or: [1, {not: {and: [3, 4]}}]}]})
   .then((result) => result === true);
 
 
-// Using function operands (the iterator is not called on function operands)
-function fn () {
-  return new Promise((resolve) => {
-    setImmediate(() => resolve(true));
-  });
-}
-evaluator.execute({and: [2, fn]}).then((result) => result === true);
-
-
 // Changing the iterator on the fly
 evaluator.iterator = function (operand) {};
 
@@ -89,16 +79,6 @@ evaluator.iterator = function test (id, done) {
   });
 };
 evaluator.execute({or: [1, 2, 3]}).then((result) => log(result));
-
-
-// Traditional callback-style function operands
-function fn (done) {
-  db.getAnswer((err, data) => {
-    if (err) return done(err);
-    done(null, data.answer === 42);
-  });
-}
-evaluator.execute({or: [3, fn]}).then((result) => log(result));
 
 
 // Traditional callback-style expression execution
@@ -188,29 +168,6 @@ evaluator = new AsyncBooleanExpressionEvaluator(function test (value) {
 evaluator.execute({and: [{object: obj1}, {object: obj2}]});
 ```
 
-#### Function Operands
-
-If an operand is a function, it is *not* passed into the iterator. Instead, it is executed directly, and its
-asynchronous result is used to determine its truthiness. It should return a promise (unless you are using
-callback-style).
-
-If all of your operands are functions, you do not need to set an iterator at all.
-
-```js
-const evaluator = new AsyncBooleanExpressionEvaluator();
-function isAdmin (id) {
-  return db.getUserById(id).then((user) => user.type === 'admin');
-}
-evaluator.execute({and: [isAdmin.bind(null, 1), isAdmin.bind(null, 2)]})
-  .then((result) => log('Both are admins'));
-```
-
-The evaluator does *not* cache the result of evaluating the function operand.
-
-If you want to force a function operand to be passed into your iterator instead of having the evaluator invoke it,
-consider wrapping the function inside an object, e.g. `{fn: isAdmin.bind(null, 1)}`. The iterator can accept the bound
-`isAdmin` function and decide whether to execute it.
-
 ### Using Callback-Style Operations
 
 The evaluator prefers promise-style asynchronous execution but will detect callback-style execution based on input.
@@ -223,18 +180,14 @@ and will *not* expect the iterator to return a promise, but instead that it will
 the evaluator expects that `function test (value) {}` will return a promise, whereas
 `function test (value, callback) {}` will execute the callback. It is important, therefore, to be conscious of the
 number of arguments of the iterator function's signature.
-* If a function operand has a `length` property of 1, the evaluator assumes that it should pass a callback into the
-function operand and will *not* expect the function to return a promise, but instead that it will invoke the callback.
 
-If the iterator or any function operands do *not* use the callback-style, make sure that they always return promises and
-that they have defined the correct number of arguments in their signatures (i.e. an iterator must expect one argument
-and a function operand must expect none).
+If the iterator does *not* use the callback-style, make sure that it always returns promises and that it has defined the
+correct number of arguments in its signature (i.e. an iterator must expect one argument).
 
-If the iterator or any function operands *do* use the callback-style, make sure that the iterator expects exactly two
-arguments, the latter of which is the callback, and that any function operands expect exactly one argument, the
-callback. In addition, callbacks in both situations must be invoked with either an error or null as the first
-parameter and the result (truthy/falsy value) or null as the second parameter to the callback. Keep this in mind when
-working with certain no-error-style asynchronous functions, such as the built-in fs module's `exists` function.
+If the iterator *does* use the callback-style, make sure that the iterator expects exactly two arguments, the latter of
+which is the callback. In addition, the callback must be invoked with either an error or null as the first parameter and
+the result (truthy/falsy value) or null as the second parameter to the callback. Keep this in mind when working with
+certain no-error-style asynchronous functions, such as the built-in fs module's `exists` function.
 
 ### Configuring Parallel Limit
 
